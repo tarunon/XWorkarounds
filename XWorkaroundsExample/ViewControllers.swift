@@ -60,11 +60,11 @@ class SafeAreaVisibleViewController: ViewController {
         bottomLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomLabel.text = "Bottom"
         bottomLabel.font = .systemFont(ofSize: 40.0)
-        view.addSubview(centerView)
-        view.addSubview(topView)
-        view.addSubview(bottomView)
-        view.addSubview(topLabel)
-        view.addSubview(bottomLabel)
+        view.insertSubview(centerView, at: 0)
+        view.insertSubview(topView, at: 1)
+        view.insertSubview(bottomView, at: 2)
+        view.insertSubview(topLabel, at: 3)
+        view.insertSubview(bottomLabel, at: 4)
         NSLayoutConstraint.activate(
             [
                 centerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -112,4 +112,32 @@ class CommonFullscreenViewController: SafeAreaVisibleViewController {
 
 class WorkaroundFullscreenViewController: FullscreenViewController<CommonFullscreenViewController> {
     
+}
+
+class PushWithHideTabBarNavigationController: UINavigationController, UIGestureRecognizerDelegate {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return viewControllers.count > 1
+    }
+}
+
+class PushWithHideTabBarViewController: SafeAreaVisibleViewController {
+    @IBInspectable var shouldTabBarHidden: Bool = false {
+        didSet {
+            (tabBarController as? TabBarController)?.setTabBarHidden(shouldTabBarHidden, animated: true)
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        (tabBarController as? TabBarController)?.setTabBarHidden(shouldTabBarHidden, animated: animated)
+    }
+
+    @IBAction func switchTabBarHidden(_ sender: UISwitch) {
+        shouldTabBarHidden = !sender.isOn
+    }
 }

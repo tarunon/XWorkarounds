@@ -56,6 +56,7 @@ open class FullscreenViewController<ChildViewController: UIViewController>: UIVi
     }
 
     private func updateSafeArea() {
+        // Notes: Checking has displays safearea or not.
         if UIApplication.shared.windows.first?.safeAreaInsets == UIEdgeInsets.zero {
             additionalSafeAreaInsets.top = -20.0
         }
